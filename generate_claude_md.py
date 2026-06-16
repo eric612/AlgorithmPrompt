@@ -27,6 +27,7 @@ from pathlib import Path
 RULE_CATALOG = {
     "core_behavior":        {"file": "core_behavior.md",        "label": "Core Behavior",             "tier": "essential"},
     "quality_first":        {"file": "quality_first.md",        "label": "Quality-First Algorithm",   "tier": "essential"},
+    "tune_algorithm_first": {"file": "tune_algorithm_first.md",  "label": "Tune Algorithm First",      "tier": "essential"},
     "debug":                {"file": "debug.md",                "label": "Debug",                     "tier": "essential"},
     "python_prototype":     {"file": "python_prototype.md",     "label": "Python Prototype",          "tier": "essential"},
     "visualization":        {"file": "visualization.md",        "label": "Visualization",             "tier": "essential"},
@@ -44,7 +45,7 @@ PROFILES = {
     "python_research": {
         "description": "Pure Python algorithm R&D (no C / no RTL)",
         "rules": [
-            "core_behavior", "quality_first", "debug",
+            "core_behavior", "quality_first", "tune_algorithm_first", "debug",
             "python_prototype", "visualization",
             "report", "handoff", "ask_before_destructive",
         ],
@@ -52,7 +53,7 @@ PROFILES = {
     "python_to_c": {
         "description": "Algorithm R&D with planned C model porting",
         "rules": [
-            "core_behavior", "quality_first", "debug",
+            "core_behavior", "quality_first", "tune_algorithm_first", "debug",
             "python_prototype", "visualization",
             "python_c_equivalence", "fixed_point_c",
             "report", "handoff", "ask_before_destructive",
@@ -61,7 +62,7 @@ PROFILES = {
     "full_ic": {
         "description": "Full IC pipeline: Python → C → Fixed-point → RTL",
         "rules": [
-            "core_behavior", "quality_first", "debug",
+            "core_behavior", "quality_first", "tune_algorithm_first", "debug",
             "python_prototype", "visualization",
             "python_c_equivalence", "fixed_point_c",
             "rtl_friendly", "config_register",
