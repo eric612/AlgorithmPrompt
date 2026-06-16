@@ -36,6 +36,7 @@ RULE_CATALOG = {
     "rtl_friendly":         {"file": "rtl_friendly.md",         "label": "RTL-Friendly",              "tier": "hardware"},
     "config_register":      {"file": "config_register.md",      "label": "Config Register",           "tier": "hardware"},
     "control_vs_algorithm_registers": {"file": "control_vs_algorithm_registers.md", "label": "Control vs Algorithm Registers", "tier": "hardware"},
+    "input_and_goals":      {"file": "input_and_goals.md",      "label": "Input Sources and Outcome Definition", "tier": "essential"},
     "report":               {"file": "report.md",               "label": "Report",                    "tier": "essential"},
     "handoff":              {"file": "handoff.md",              "label": "Handoff",                   "tier": "essential"},
     "ask_before_destructive": {"file": "ask_before_destructive.md", "label": "Ask-Before-Destructive", "tier": "essential"},
@@ -47,7 +48,7 @@ PROFILES = {
         "description": "Pure Python algorithm R&D (no C / no RTL)",
         "rules": [
             "core_behavior", "quality_first", "tune_algorithm_first", "debug",
-            "python_prototype", "visualization",
+            "python_prototype", "input_and_goals", "visualization",
             "report", "handoff", "ask_before_destructive",
         ],
     },
@@ -55,7 +56,7 @@ PROFILES = {
         "description": "Algorithm R&D with planned C model porting",
         "rules": [
             "core_behavior", "quality_first", "tune_algorithm_first", "debug",
-            "python_prototype", "visualization",
+            "python_prototype", "input_and_goals", "visualization",
             "python_c_equivalence", "fixed_point_c",
             "report", "handoff", "ask_before_destructive",
         ],
@@ -64,7 +65,7 @@ PROFILES = {
         "description": "Full IC pipeline: Python → C → Fixed-point → RTL",
         "rules": [
             "core_behavior", "quality_first", "tune_algorithm_first", "debug",
-            "python_prototype", "visualization",
+            "python_prototype", "input_and_goals", "visualization",
             "python_c_equivalence", "fixed_point_c",
             "rtl_friendly", "config_register", "control_vs_algorithm_registers",
             "report", "handoff", "ask_before_destructive",
