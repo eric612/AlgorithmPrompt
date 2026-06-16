@@ -1,54 +1,21 @@
 ## Config Register Rule
 
-For RTL-oriented work, separate registers into two categories and document each:
+概要：寄存器分为 `CONTROL`（基础/平台/时序）与 `ALGORITHM`（校准/数据）两类。所有运行时参数必须在寄存器表中列出，并标明 `Shadow`、`Lifetime` 与 `Category`。
 
-### 1. **Control Registers** (Infrastructure / Timing / Hardware-specific)
+重要变更：关于 `Shadow` / 更新时序的规范已抽取到独立文件：`_rules/shadow_update_semantics.md`（请以该文件为唯一权威）。
 
-These registers **have no algorithmic meaning** in C code and exist only to manage hardware behavior:
+要点回顾：
 
-- **Resolution / format control**: `SRC_W`, `SRC_H`, `OUT_W`, `OUT_H`, `FORMAT`, `INPUT_MODE`
-- **Buffer / memory sizing**: `MAX_FETCH_LINES`, `OUT_RING_DEPTH_LINES`, scratchpad partition registers
-- **Timing / performance gates**: `BLEND_MAX_SLEW_Q8`, `MIPMAP_MAX_LOD`, bandwidth monitor thresholds
-- **Timing constraints**: `MESH_DENSITY_X/Y` (hardware architecture choice, frozen at boot)
-- **Status / handshake**: `CONFIG_VALID`, interrupts, completion flags
- - **Resolution / format control**: `SRC_WIDTH`, `SRC_HEIGHT`, `OUT_WIDTH`, `OUT_HEIGHT`, `PIXEL_FORMAT`, `INPUT_MODE`
- - **Buffer / memory sizing**: `FETCH_WINDOW_LINES`, `OUTPUT_RING_DEPTH`, `SCRATCHPAD_BASE`, `SCRATCHPAD_SIZE`
- - **Timing / performance gates**: `MAX_BLEND_SLEW`, `MIPMAP_MAX_LOD`, `BANDWIDTH_THRESHOLD`
- - **Timing constraints**: `MESH_DENSITY` (hardware architecture choice, frozen at boot)
- - **Status / handshake**: `CONFIG_COMMIT`, `STATUS_FLAGS`, interrupts, completion flags
+- `Category`：`CONTROL` 或 `ALGORITHM`。若某 `CONTROL` 寄存器的修改会直接改变像素数学结果（可视觉观测），应重新分类为 `ALGORITHM` 或附带 C-simulatable 验证向量。
+- `Shadow` 字段：必须填写，取值见 `shadow_update_semantics.md` 中的枚举（例如 `FRAME_BOUNDARY`, `STAGED_COMMIT` 等）。
+- `Lifetime`：`BOOT_ONLY` 或 `RUNTIME`，表明能否在运行时修改。
 
-**Key property**: Changing a control register changes **how** the algorithm runs (speed, memory footprint, feature enable/disable), not **what** computation happens.
+寄存器表示例（必须包含下列列）：
 
-### 2. **Algorithm Data Registers** (Calibration / Algorithmic Parameters)
+| Register | Bits | Type | Default | Shadow | Lifetime | UpdateTrigger | Category | Description |
+|---|---:|---|---:|---:|---:|---:|---:|---|
+| LUT_BASE_A | AXI_ADDR | - | 0 | DOUBLE_BUFFER | RUNTIME | COMMIT | ALGORITHM | 主 LUT 槽 A 基址 |
+| GLOBAL_GAIN | U12.10 | - | 1024 | FRAME_BOUNDARY | RUNTIME | AUTO_FRAME | ALGORITHM | 全局放大系数 |
+| OUTPUT_RING_DEPTH | U8 | - | 32 | STATIC | BOOT_ONLY | - | CONTROL | SoC 集成选择，boot-only |
 
-These registers carry the **actual algorithm state** and must remain in sync between C model and RTL:
-
-- **LUT / mapping tables**: `LUT0_BASE`, `LUT1_BASE`, mesh coordinates, sparse-mesh control points
-- **Blend / blending weights**: `BLEND_WEIGHT_Q8`, `LUT_DELTA_TH_X/Y`
-- **Gain / offset tuning**: per-pixel gains, per-pixel offsets, global gain/offset
-- **Color / CSC matrices**: `YUV_MATRIX_MODE`, custom coefficients, bias values
-- **Sensor input**: IMU pitch, angular velocity, frame time
- - **LUT / mapping tables**: `LUT_BASE_A`, `LUT_BASE_B`, mesh coordinates, sparse-mesh control points
- - **Blend / blending weights**: `BLEND_WEIGHT`, `LUT_DELTA_THRESHOLD_X/Y`
- - **Gain / offset tuning**: `PER_PIXEL_GAIN`, `PER_PIXEL_OFFSET`, `GLOBAL_GAIN`, `GLOBAL_OFFSET`
- - **Color / CSC matrices**: `COLOR_MATRIX_MODE`, `COLOR_MATRIX_COEFFS`, bias values
- - **Sensor input**: `SENSOR_PITCH`, `SENSOR_GYRO`, frame time
-
-**Key property**: These registers carry customer calibration, algorithmic tuning, or frame-specific input data. Changing them changes the **mathematical result**.
-
-### Register Table Format
-
-For each category, list registers:
-
-| Register | Bits | Type | Default | Shadow | Update Timing | Category | Description |
-|---|---:|---|---:|---|---|---|---|
-
-Fill the **Category** column with `CONTROL` or `ALGORITHM`.
-
-**Shadow behavior** (explicit for both types):
-- **Control registers**: Often immediate (resolution, format), but timing guards like `BLEND_MAX_SLEW_Q8` may be frame-boundary shadowed
-- **Algorithm registers**: Typically frame-boundary or line-boundary shadowed to avoid mid-frame inconsistency
- - **Control registers**: Often immediate (resolution, format), but timing guards like `MAX_BLEND_SLEW` may be frame-boundary shadowed
- - **Algorithm registers**: Typically frame-boundary or line-boundary shadowed to avoid mid-frame inconsistency
-
-Every runtime parameter must be included.
+参见 `_rules/shadow_update_semantics.md` 获取完整语义、PR 清单与校验建议（建议把自动检查脚本集成到 CI）。

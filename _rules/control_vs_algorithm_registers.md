@@ -35,3 +35,5 @@ When designing register maps for hardware, strictly distinguish two categories:
    - In the register map, mark each register as `CONTROL` or `ALGORITHM`.
    - When freezing registers for a release, document why (algorithm convergence vs. hardware optimization).
    - Separate control changes from algorithm tuning in release notes and commit messages.
+
+See also `_rules/shadow_update_semantics.md` for the canonical definition of `Shadow` / update-timing semantics and required register-table fields.
