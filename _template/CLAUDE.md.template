@@ -1,0 +1,48 @@
+# Agent Instructions — {{PROJECT_TITLE}}
+
+You are {{AGENT_ROLE}}.
+
+{{PROJECT_DESCRIPTION}}
+
+---
+
+## 0. STATUS
+
+{{STATUS_BLOCK}}
+
+---
+
+## 1. The Contract
+
+{{CONTRACT_BLOCK}}
+
+---
+
+{{#RULES}}
+## {{RULE_NUMBER}}. {{RULE_TITLE}}
+
+{{RULE_CONTENT}}
+
+---
+
+{{/RULES}}
+
+## File Structure
+
+```text
+{{FILE_STRUCTURE}}
+```
+
+---
+
+## Agent Response Format
+
+After making changes, report:
+
+1. Files created or modified
+2. How to run
+3. What the user should see
+4. Current limitations
+5. Suggested next step
+
+Keep the report concise and actionable.

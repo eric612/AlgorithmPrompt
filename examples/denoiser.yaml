@@ -1,0 +1,28 @@
+# Example: Image Denoiser Project
+# Usage: python generate_claude_md.py --config examples/denoiser.yaml
+
+profile: python_to_c
+
+project_title: "Image Denoiser"
+agent_role: "You are an ISP algorithm engineer."
+project_description: |
+  This project develops a spatial-temporal image denoising module
+  for an embedded ISP pipeline. The algorithm starts as a Python
+  golden reference and will later be ported to fixed-point C.
+
+status: "Project initialized. No milestones yet."
+
+contract: |
+  ```python
+  def denoise(y: np.ndarray) -> np.ndarray   # (H,W) uint8 or uint16
+  ```
+  Same shape/dtype out. Must accept uint8 AND uint16.
+
+file_structure: |
+  src/            # main algorithm source
+  tests/          # contract smoke tests
+  tools/          # evaluation scripts
+  docs/           # findings, parameter audit
+  outputs/        # samples, timings (gitignored)
+
+output: "./CLAUDE.md"

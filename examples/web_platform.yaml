@@ -1,0 +1,26 @@
+# Example: Flask Web Platform
+# Usage: python generate_claude_md.py --config examples/web_platform.yaml
+
+profile: webapp
+
+project_title: "Internal AI Platform"
+agent_role: "You are taking over a Flask-based internal AI/automation platform."
+project_description: |
+  The project serves Flask APIs, AI orchestration, session upload
+  and analysis, local JSON-backed record storage, and web dashboards.
+
+status: "Platform operational. Active development on new features."
+
+contract: |
+  - Do not break existing endpoints.
+  - Keep changes small and reversible.
+  - Preserve backward compatibility.
+
+file_structure: |
+  core/             # business logic handlers
+  routes/           # Flask route blueprints
+  templates/        # Jinja2 HTML templates
+  static/           # CSS / JS assets
+  reference_data/   # lookup tables, descriptors
+
+output: "./CLAUDE.md"

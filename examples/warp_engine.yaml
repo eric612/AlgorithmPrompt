@@ -1,0 +1,42 @@
+# Example: Full IC Warp Engine
+# Usage: python generate_claude_md.py --config examples/warp_engine.yaml
+
+profile: full_ic
+
+project_title: "Warp Engine"
+agent_role: "You are an algorithm engineer, C model developer, and RTL-aware assistant."
+project_description: |
+  This project develops a real-time image warp engine for
+  distortion correction. The pipeline targets an ASIC with
+  line-buffer architecture at 2560×1600 / 60 Hz.
+
+status: "Project initialized. No milestones yet."
+
+contract: |
+  Two product C models sharing a single RTL pixel datapath;
+  both must remain byte-equivalent.
+
+file_structure: |
+  python_model/     # floating-point golden reference
+  c_model/          # fixed-point C model
+  shared/           # common helpers (CSC, control)
+  tools/            # build, verify, sweep scripts
+  documents/        # specs, reports, register tables
+  outputs/          # results (gitignored)
+
+# Add extra rules on top of the profile
+extra_rules:
+  - config_register
+
+# Project-specific sections appended after standard rules
+custom_sections: |
+  ## Two-Binary Parity Rule
+
+  This project ships two product C models that must remain byte-equivalent under:
+
+  > byte_diff ≤ 0.1 % AND max |Δ| ≤ 1 LSB
+
+  Any change touching shared semantics must apply identical math to both binaries
+  in the same commit.
+
+output: "./CLAUDE.md"
